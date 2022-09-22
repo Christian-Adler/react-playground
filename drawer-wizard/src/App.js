@@ -49,6 +49,7 @@ function App() {
           position="right"
           idSuffix="wizard"
           duration={1500}
+          size='60%'
         >
           <div style={{ padding: '16px', }}>
             <MyWizard/>

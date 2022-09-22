@@ -22,6 +22,7 @@ function createPortalRoot(drawerRootId) {
  * @param className
  * @param idSuffix
  * @duration in ms,
+ * @size css je nach position width | height,
  * @returns {React.ReactPortal|null}
  * @constructor
  */
@@ -34,9 +35,8 @@ const Drawer = ({
                   className = '',
                   idSuffix = '',
                   duration = 300,
+                  size = '40%',
                 }) => {
-  // size evtl. auch noch als parameter? Default '30%'
-  
   const idSffx = useMemo(() => {
     return idSuffix || (Math.random() + 1).toString(36).substring(7)
   }, [idSuffix])
@@ -107,6 +107,11 @@ const Drawer = ({
     positionMappedCls = classes.top;
   
   const transitionStyle = { transitionDuration: duration + 'ms' };
+  const sizeStyle = {};
+  if (position === 'bottom' || position === 'top')
+    sizeStyle.height = size;
+  else
+    sizeStyle.width = size;
   
   return createPortal(
     // For production surround with <FocusTrap> : focus-trap-react : https://github.com/focus-trap/focus-trap-react
@@ -114,7 +119,7 @@ const Drawer = ({
       aria-hidden={isOpen ? "false" : "true"}
       className={`${classes.drawerContainer} ${isOpen ? classes.open : ''} ${isTransitioned ? classes.isTransitioned : ''} ${className}`}
     >
-      <div className={`${classes.drawer} ${positionMappedCls}`} style={{ ...transitionStyle }} role="dialog">
+      <div className={`${classes.drawer} ${positionMappedCls}`} style={{ ...sizeStyle, ...transitionStyle }} role="dialog">
         {children}
       </div>
       <div className={classes.backdrop} style={{ ...transitionStyle }} onClick={onClose}/>
