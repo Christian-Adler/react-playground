@@ -1,0 +1,89 @@
+.step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: stretch;
+    cursor: default;
+    border-radius: 5px;
+    background-color: transparent;
+    transition: background-color 500ms ease;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.step:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.step .dotContainer {
+    height: 20px;
+    position: relative;
+}
+
+.step .dot {
+    height: 20px;
+    width: 20px;
+    border-radius: 10px;
+    background-color: #8d8d8d;
+    position: absolute;
+    left: 50%;
+    margin-left: -10px;
+    transition: background-color 500ms ease;
+}
+
+.step.active .dot, .step.finished .dot {
+    background-color: #43c2ce;
+}
+
+.step .dotLine {
+    height: 10px;
+    background-color: #8d8d8d;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 5px;
+    transition: background-color 500ms ease;
+}
+
+.step:first-child .dotLine {
+    left: 50%;
+}
+
+.step:last-child .dotLine {
+    right: 50%;
+}
+
+.step .dotLine:before {
+    display: block;
+    content: "";
+    height: 10px;
+    background-color: transparent;
+    position: absolute;
+    left: 0;
+    width: 70%;
+    top: 0;
+    border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
+    transition: background-color 500ms ease;
+}
+
+.step:first-child .dotLine:before {
+    width: 40%;
+}
+
+.step:last-child .dotLine:before {
+    width: 100%;
+}
+
+
+.step.finished .dotLine {
+    background-color: #43c2ce;
+}
+
+.step.active .dotLine:before {
+    background-color: #43c2ce;
+}
+
+
+
