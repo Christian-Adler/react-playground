@@ -1,0 +1,80 @@
+.wizard {
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
+    justify-content: stretch;
+    overflow: hidden;
+}
+
+
+.wizard .contentContainer {
+    flex: 1;
+    /*background-color: lightgrey;*/
+    transform: translateX(0%);
+}
+
+.wizard .contentContainer.animate {
+    transition: transform 0.4s ease;
+}
+
+.wizard .contentContainer.left {
+    transform: translateX(-100%);
+}
+
+.wizard .contentContainer.right {
+    transform: translateX(100%);
+}
+
+
+.wizard .buttonContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    border-top: 1px solid lightgrey;
+    margin-top: 8px;
+}
+
+.wizard .buttonContainer * {
+    margin-top: 8px;
+    margin-left: 8px;
+}
+
+.wizard .steps {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 8px;
+}
+
+.wizard .step {
+    background-color: #dadada;
+    color: white;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid white;
+    transition: background-color 0.5s ease;
+    white-space: pre-line;
+    text-align: center;
+}
+
+.wizard .step.stepDone {
+    background-color: #43c2ce;
+}
+
+.wizard .step.stepActive {
+    background-color: #3c76ee;
+}
+
+.wizard .stepConnector {
+    flex: 1;
+    height: 6px;
+    background-color: rgba(0, 0, 0, 0.1);
+    transition: background-color 0.5s ease;
+}
+
+.wizard .stepConnector.stepDone {
+    background-color: #43c2ce;
+}
