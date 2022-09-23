@@ -16,6 +16,11 @@
     transition-property: transform;
     transition-duration: var(--transition-speed);
     z-index: 1000;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
 }
 
 .drawerContainer .drawer.left {

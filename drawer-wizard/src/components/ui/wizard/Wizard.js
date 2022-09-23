@@ -1,9 +1,8 @@
-// import {useState} from "react";
-// import "./Wizard.module.css";
-import {useEffect, useRef, useState} from "react";
+import {forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState} from "react";
 import classes from "./Wizard.module.css";
+import Steps from "../steps/Steps";
 
-const Wizard = ({ steps, step, provideRenderComponent, onNext, onPrev, onStepSelect }) => {
+const Wizard = forwardRef(({ steps, step, provideRenderComponent, onStepSelect, checkStepAllowed, hideDefaultButtons = false }, ref) => {
   // Vorherigen Step merken, um Animationsrichtung zu steuern.
   const [prevStep, setPrevStep] = useState(0);
   const contentContainerRef = useRef();
@@ -34,57 +33,61 @@ const Wizard = ({ steps, step, provideRenderComponent, onNext, onPrev, onStepSel
    * @param direction (left|right)
    * @param afterSlide Callback
    */
-  const slideOut = (direction, afterSlide) => {
+  const slideOut = useCallback((direction, afterSlide) => {
     contentContainerRef.current.classList.add(direction);
     setTimeout(() => {
       afterSlide();
     }, 400);
-  }
+  }, []);
   
-  const nextHandler = () => {
-    slideOut(classes.left, onNext);
-  };
-  const prevHandler = () => {
-    slideOut(classes.right, onPrev);
-  };
-  const stepHandler = (idx) => {
+  const nextHandler = useCallback(() => {
+    if (typeof checkStepAllowed === "function" && !checkStepAllowed(step + 1)) return; // Pruefung ob erlaubt
+    
+    slideOut(classes.left, () => {
+      onStepSelect(step + 1)
+    });
+  }, [slideOut, step, onStepSelect, checkStepAllowed]);
+  
+  const prevHandler = useCallback(() => {
+    if (typeof checkStepAllowed === "function" && !checkStepAllowed(step - 1)) return; // Pruefung ob erlaubt
+    
+    slideOut(classes.right, () => {
+      onStepSelect(step - 1);
+    });
+  }, [slideOut, step, onStepSelect, checkStepAllowed]);
+  
+  const stepHandler = useCallback((idx) => {
+    if (idx === step) return;
+    if (typeof checkStepAllowed === "function" && !checkStepAllowed(idx)) return; // Pruefung ob erlaubt
+    
     const direction = idx > step ? classes.left : classes.right;
     slideOut(direction, () => {
       onStepSelect(idx)
     });
-  };
+  }, [slideOut, step, onStepSelect, checkStepAllowed]);
   
-  // Steps zusammen bauen - koennte auch eine Component werden...
-  let stepsContent = [];
-  for (let i = 0; i < steps.length; i++) {
-    // Connector?
-    if (i > 0) {
-      stepsContent.push(<div key={'connector' + i} className={classes.stepConnector + " " + ((i <= step) ? classes.stepDone : '')}></div>);
+  // Methoden von aussen aufrufbar machen:
+  useImperativeHandle(ref, () => ({
+    nextStep: nextHandler,
+    prevStep: prevHandler,
+    gotoStep: (stepIdx) => {
+      stepHandler(stepIdx);
     }
-    const stepItem = steps[i];
-    let cls = classes.step;
-    if (i === step)
-      cls += ` ${classes.stepActive}`;
-    else if (i < step)
-      cls += ` ${classes.stepDone}`;
-    stepsContent.push(<div key={'step' + i} onClick={stepHandler.bind(window, i)} className={cls}>{stepItem}</div>
-    );
-  }
+  }));
   
   return (
     <div className={classes.wizard}>
-      <div className={classes.steps}>
-        {stepsContent}
-      </div>
+      <Steps steps={steps} step={step} onStepClick={stepHandler}/>
       <div className={classes.contentContainer} ref={contentContainerRef}>
         {provideRenderComponent()}
       </div>
-      <div className={classes.buttonContainer}>
-        {onPrev && <button onClick={prevHandler}>Prev</button>}
-        {onNext && <button onClick={nextHandler}>{step < steps.length - 1 ? 'Next' : 'Finish'}</button>}
-      </div>
+      {!hideDefaultButtons &&
+        <div className={classes.buttonContainer}>
+          {step > 0 && <button onClick={prevHandler}>Prev</button>}
+          {<button onClick={nextHandler}>{step < steps.length - 1 ? 'Next' : 'Finish'}</button>}
+        </div>}
     </div>
   );
-};
+});
 
 export default Wizard;
